@@ -64,12 +64,7 @@ bool Less(string s1, string s2)
 }
 int main()
 {
-	//fstream f("output.txt", ios::in | ios::out);
-//#define cout f
-
-
 	string s;
-
 	while (cin >> s)
 	{
 		if (s == "()")
