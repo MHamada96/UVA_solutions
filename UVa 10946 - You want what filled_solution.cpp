@@ -1,82 +1,71 @@
-#include<iostream>
+#define _CRT_SECURE_NO_WARNINGS
 
-#include<fstream>
-#include<istream>
-#include<ostream>
-
-#include<vector>
-#include<deque>
-#include<set>
-#include<map>
-#include<queue>
-
-#include<string>
-#include<cstring>
-#include<sstream>
-
-#include<cmath>
-#include <stdlib.h>
-#include<iomanip>
-#include<algorithm>
-#include<assert.h>
+#include<bits/stdc++.h>
 
 using namespace std;
-
-#define PI		3.14159265
-#define OO		1e9
-#define S       second
-#define F       first  
+#define PI			3.14159265
+#define OO			1e9
+#define SS       	second
+#define FF       	first  
+#define Trace(n)  	cout<< #n <<" = "<< n << endl; 
+#define ll			long long
+#define endl		"\n"
 
 
 int dx[] = { 0, 0, -1, 1, 1, 1, -1, -1 };
 int dy[] = { -1, 1, 0, 0, 1, -1, 1, -1 };
-//fstream f("output.txt", ios::in | ios::out);
-//#define cout f
 
 void fast()
 {
 	std::ios_base::sync_with_stdio(0);
 	cin.tie(NULL);
 	cout.tie(NULL);
+
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+#endif
+
 }
-bool vis[1000][1000];
+
+int n, m;
+bool vis[100][100];
 char grid[100][100];
-multiset<pair<int, char> > ans_set;
+int cnt;
+vector<pair<char, int> >v;
 
-int n, m, T, C;
-
-void clear()
-{
-	memset(vis, false, sizeof vis);
-	ans_set.clear();
-}
 bool valid(int i, int j)
 {
-	return  i >= 0 && j >= 0 && i < n && j < m;
+	return i < n && j < m && i >= 0 && j >= 0;
 }
-void DFS(int i, int j,char land)
-{
-	if (!valid(i, j) || vis[i][j] || grid[i][j] != land)
-		return;
 
-	C++;
+void dfs(int i, int j, char c)
+{
 	vis[i][j] = true;
-	
-	for (int I = 0; I < 4; I++)
-		DFS(i + dx[I], j + dy[I], land);
+	cnt++;
+
+	for (int k = 0; k < 4; k++)
+	{
+		int x = i + dx[k];
+		int y = j + dy[k];
+		if (valid(x, y) && !vis[x][y] && grid[x][y] == c)
+		{
+			dfs(x, y, c);
+		}
+	}
 }
 
 int main()
 {
-	int Test = 1;
-	while (cin>>n>>m)
+	fast();
+	int T = 0;
+	while (cin >> n >> m && (n > 0 && m > 0))
 	{
-		if (n == 0 && m == 0)
-			return 0;
+		T++;
+		memset(vis, 0, sizeof  vis);
+		v.clear();
 
-		clear();
-
-		for (int i = 0; i < n;i++)
+		for (int i = 0; i < n; i++)
 		for (int j = 0; j < m; j++)
 			cin >> grid[i][j];
 
@@ -84,22 +73,28 @@ int main()
 		{
 			for (int j = 0; j < m; j++)
 			{
-				C = 0;
+				if (grid[i][j] == '.')
+					continue;
 
-				if (grid[i][j] != '.')
-					DFS(i, j, grid[i][j]);
-
-				if (C)
-					ans_set.insert(make_pair(-C, grid[i][j]));
+				if (!vis[i][j])
+				{
+					cnt = 0;
+					dfs(i, j, grid[i][j]);
+					v.push_back({ grid[i][j], cnt });
+				}
 			}
 		}
 
-		cout << "Problem " << Test++ << ":" << endl;
-
-		set<pair<int, char> >::iterator it = ans_set.begin();
-
-		for (; it != ans_set.end(); it++)
-			cout << it->second << " " << abs(it->first) << endl;
+		for (int i = 0; i < v.size(); i++)
+		{
+			for (int j = i + 1; j < v.size(); j++)
+			{
+				if (v[j].SS>v[i].SS || (v[j].SS == v[i].SS && v[j].FF < v[i].FF))
+					swap(v[i], v[j]);
+			}
+		}
+		cout << "Problem " << T << ":" << endl;
+		for (int i = 0; i < v.size(); i++)
+			cout << v[i].FF << " " << v[i].SS << endl;
 	}
-
 }
